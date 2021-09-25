@@ -99,7 +99,7 @@ public class CharasSaveAndLoad : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-       
+       SaveUnits();
         
     }
     public void SaveUnits()
