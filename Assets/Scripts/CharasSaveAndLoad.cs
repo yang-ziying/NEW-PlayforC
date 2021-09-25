@@ -62,14 +62,14 @@ public class UnitInfo
                 u_hp[i]= 100; //ここにHPMAX計算式設置
                 u_mp[i]= 100; //ここにMPMAX計算式設置
                 u_exp[i] = 0; 
-                u_job[i] = Random.Range(0,4);
+                u_job[i] = Random.Range(0,6);
 
                 int a =0;
                 while (a!=40)
                 {
                 u_mov[i] = Random.Range(3,6);
-                u_vit[i] = Random.Range(1,11); //ここをランダムにする予定 
-                u_str[i] = Random.Range(1,11); //ここもランダムにする予定 以下同
+                u_vit[i] = Random.Range(1,11); 
+                u_str[i] = Random.Range(1,11);
                 u_dex[i] = Random.Range(1,11); 
                 u_agi[i] = Random.Range(1,11); 
                 u_luk[i] = Random.Range(1,11); 

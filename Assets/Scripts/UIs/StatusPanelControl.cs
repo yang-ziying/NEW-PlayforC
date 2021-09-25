@@ -9,7 +9,7 @@ public class StatusPanelControl : MonoBehaviour
 {
     int now_idx;
     [SerializeField]
-    Sprite[] images= new Sprite[4];
+    Sprite[] images= new Sprite[6];
 
     // Start is called before the first frame update
     void Start()
