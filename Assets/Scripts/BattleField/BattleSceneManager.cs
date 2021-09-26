@@ -116,8 +116,8 @@ public class BattleSceneManager : MonoBehaviour
             }
 
          }
-         unitmove.calMoveRange(5,5,4);
-         //unitmove.calMoveRange(units[InTurnUnitID].Unit_y,units[InTurnUnitID].Unit_x,units[InTurnUnitID].MOV);
+        
+         unitmove.calMoveRange(units[InTurnUnitID].Unit_y,units[InTurnUnitID].Unit_x,units[InTurnUnitID].MOV);
         
 
         
