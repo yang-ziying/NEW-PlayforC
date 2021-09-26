@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class CharaManager : MonoBehaviour
 {
+    [SerializeField]
+    GameObject charaPrefab;
+    
     //何をしてるかというとUnitMoveから送られてくる位置データをQueueに保存してそれでキャラをゆっくりと動かす
     private static Queue<float> unitmovetox = new Queue<float>();
     private static Queue<float> unitmovetoy = new Queue<float>();

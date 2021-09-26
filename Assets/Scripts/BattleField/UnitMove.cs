@@ -6,11 +6,11 @@ using System.Linq;
 
 public class UnitMove : MonoBehaviour
 {
-    private int mov=5; //テスト用のプレイヤーのMOV
+   
     private int unitposix; //unitposiは内でルートを踏んで動くが動画の方はSeneManegerに任せる
     private int unitposiy; //そのためunitposiが示しているのは実際の位置（動画は故意にラグる）
 
-    private bool isPositionSelecting = false;　//もしTrueだった場合目標位置をクリック可
+   
 
    
     public static int[,] mapmove = new int[12,24]; //☆こいつに座標の移動ステータスが含まれている STATIC
@@ -51,16 +51,14 @@ public class UnitMove : MonoBehaviour
         {
             
 
-            if(isPositionSelecting == false) 
-            {
-                calMoveRange(unitposiy,unitposix,mov);　//移動できる全ての座標をＭａｐｍｏｖｅに書き込み赤くする,現在座標y、x、プレイヤー移動残り
+           
+                //calMoveRange(unitposiy,unitposix,5);　//移動できる全ての座標をＭａｐｍｏｖｅに書き込み赤くする,現在座標y、x、プレイヤー移動残り
                 
-            }
-            else 
-            {
-                calMoveRootandMove(Tile.clicky,Tile.clickx); //Tileがクリックされたｘｙを元に動けるか判断して動ける場合は動いてＭａｐｍｏｖｅ終了、動けない場合はなにもせず終了 
+           
+            
+                //calMoveRootandMove(Tile.clicky,Tile.clickx); //Tileがクリックされたｘｙを元に動けるか判断して動ける場合は動いてＭａｐｍｏｖｅ終了、動けない場合はなにもせず終了 
                
-            }
+           
         }
     
 
@@ -77,7 +75,7 @@ public class UnitMove : MonoBehaviour
 
     public void calMoveRange(int y,int x,int moverem)//現在座標y、x、プレイヤー移動残り
     {
-        isPositionSelecting = true;　//ポジションセレクト開始
+        
       int sabunUp = 0;
       int sabunRight = 0;
       int sabunDown = 0;
@@ -192,7 +190,7 @@ public class UnitMove : MonoBehaviour
                    changeUnitposi(yy,xx);
                 }
             resetMapmove();//pop終わったらＭａｐｍｏｖｅは仕事終了なので何もないころに戻す
-             isPositionSelecting = false; //positionselect終了
+            
         }
 
     }

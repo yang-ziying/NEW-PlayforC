@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System.Linq;
+using System;
 
 public class Unit 
  {
@@ -14,6 +14,11 @@ public class Unit
     private int spd;
     private int mov;
     private int job;
+    private int unit_x;
+    private int unit_y;
+    private float turnmax;
+    private float turn;
+    
 
     public void SetStatus(UnitInfo unitinfo,int idx)
     {
@@ -25,11 +30,37 @@ public class Unit
         spd=unitinfo.u_agi[idx]*3+unitinfo.u_dex[idx]*1;
         mov=unitinfo.u_mov[idx];
         job=unitinfo.u_job[idx];
+        turnmax= 100f/((float)Math.Sqrt((double)spd));
+        Debug.Log(unitID+"'s turnmax="+turnmax);
 
         
     }
-    public int SPD {get=>spd;}
+    public void MoveTo(int y, int x)
+    {
+        unit_x= x;
+        unit_y= y;
+    }
+    public bool IsMyTurn()
+    {
+        turn+=0.01f;
+        if(turn>=turnmax)
+        {
+            turn = 0f;
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+        
+    }
+
     public int UnitID{get=>unitID;}
+    public int SPD {get=>spd;}
+    public int Unit_x{get=>unit_x;}
+    public int Unit_y{get=>unit_y;}
+    public int MOV {get=>mov;}
+    
     public void Damage(int damage) 
     {
        if(def<damage) hp-=(damage-def);
@@ -42,27 +73,64 @@ public class Unit
 public class BattleSceneManager : MonoBehaviour
 {
    
-    Unit[] units = new Unit[6];
+    private Unit[] units = new Unit[6];
+     //unitposi管理をSceneManegerで行う　画像はCharaManager
+   
 
-    UnitInfo allunitinfo;
-    
+    private GameObject unitmoveobj;
+    private UnitMove unitmove;
+    private UnitInfo allunitinfo;
+    private CharaManager charamanager;
+
+
+    int InTurnUnitID;
 
 
     // Start is called before the first frame update
     void Start()
     {
+        unitmoveobj= GameObject.Find("UnitMove");      //这里这里******************************
+        unitmove=unitmoveobj.GetComponent<UnitMove>();
+
+        charamanager = GameObject.Find("CharaManager").GetComponent<CharaManager>();
+
         allunitinfo = UnitInfo.CreateFromSaveData();
+        
+
         for(int i=0;i<6;i++)
         {
             units[i]= new Unit();
             units[i].SetStatus(allunitinfo,i);
+            units[i].MoveTo(i,i);
+            
         }
-        IEnumerable<Unit> unitTurnOrder = units.OrderBy(unit=>-unit.SPD);
-        foreach (Unit unit in unitTurnOrder)//独自の機能を追加した自作クラスをforeachで使用したい場合は、IEnumerableが必須となります。
-        {
-             Debug.Log("spd:"+ unit.SPD + " id:"+unit.UnitID);
-        }
+         //Array.Sort(units, (a, b) => b.SPD - a.SPD);
+         while(true)
+         {
+            int tick=TurnTick();
+            if(tick>=0)
+            {
+                InTurnUnitID=tick;
+                Debug.Log("InTurnUnitID="+InTurnUnitID);
+                break;
+            }
+
+         }
+         unitmove.calMoveRange(5,5,4);
+         //unitmove.calMoveRange(units[InTurnUnitID].Unit_y,units[InTurnUnitID].Unit_x,units[InTurnUnitID].MOV);
+        
+
+        
+        
          
+    }
+    int TurnTick()
+    {   int id=-1;
+        for(int i=0;i<6;i++)
+            {
+                if(units[i].IsMyTurn()) id=units[i].UnitID; 
+            } 
+        return id;
     }
 
     // Update is called once per frame
@@ -70,4 +138,5 @@ public class BattleSceneManager : MonoBehaviour
     {
         
     }
+    
 }
