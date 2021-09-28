@@ -31,7 +31,7 @@ public class Unit
         mov=unitinfo.u_mov[idx];
         job=unitinfo.u_job[idx];
         turnmax= 100f/((float)Math.Sqrt((double)spd));
-        Debug.Log(unitID+"'s turnmax="+turnmax);
+        //Debug.Log(unitID+"'s turnmax="+turnmax);
 
         
     }
@@ -40,6 +40,13 @@ public class Unit
         unit_x= x;
         unit_y= y;
     }
+    public Vector3 GetPosition()
+    {
+        Vector3 position=new Vector3(unit_x,unit_y,unit_y); //zを故意に指定している。重複問題に関わる。
+        return position;
+    }
+
+
     public bool IsMyTurn()
     {
         turn+=0.01f;
@@ -57,9 +64,10 @@ public class Unit
 
     public int UnitID{get=>unitID;}
     public int SPD {get=>spd;}
+    public int MOV {get=>mov;}
+    public int JOB {get=>job;}
     public int Unit_x{get=>unit_x;}
     public int Unit_y{get=>unit_y;}
-    public int MOV {get=>mov;}
     
     public void Damage(int damage) 
     {
@@ -72,9 +80,12 @@ public class Unit
 
 public class BattleSceneManager : MonoBehaviour
 {
-   
-    private Unit[] units = new Unit[6];
+    public static int partynumber = 6; //臨時　パーティーのキャラ数
+    private Unit[] units = new Unit[partynumber];
      //unitposi管理をSceneManegerで行う　画像はCharaManager
+
+    
+   
    
 
     private GameObject unitmoveobj;
@@ -83,13 +94,15 @@ public class BattleSceneManager : MonoBehaviour
     private CharaManager charamanager;
 
 
-    int InTurnUnitID;
+    public static int InTurnUnitIdx; //現在のターンのUnitのINDEXNUMBER
+
+    
 
 
-    // Start is called before the first frame update
-    void Start()
+   
+    void Awake() //Startだと他のManagerにUnits[]渡すの間に合わない。Unitの定義のみAwakeが必要
     {
-        unitmoveobj= GameObject.Find("UnitMove");      //这里这里******************************
+        unitmoveobj= GameObject.Find("UnitMove");      
         unitmove=unitmoveobj.GetComponent<UnitMove>();
 
         charamanager = GameObject.Find("CharaManager").GetComponent<CharaManager>();
@@ -97,46 +110,67 @@ public class BattleSceneManager : MonoBehaviour
         allunitinfo = UnitInfo.CreateFromSaveData();
         
 
-        for(int i=0;i<6;i++)
+        for(int i=0;i<partynumber;i++)
         {
             units[i]= new Unit();
             units[i].SetStatus(allunitinfo,i);
-            units[i].MoveTo(i,i);
+            units[i].MoveTo(i*i/5+1,i*2+1);
             
         }
          //Array.Sort(units, (a, b) => b.SPD - a.SPD);
-         while(true)
+         
+     
+         
+    }
+    private void Start() 
+    {
+        while(true)
          {
             int tick=TurnTick();
             if(tick>=0)
             {
-                InTurnUnitID=tick;
-                Debug.Log("InTurnUnitID="+InTurnUnitID);
+                InTurnUnitIdx=tick;
+                //Debug.Log("InTurnUnitIdx="+InTurnUnitIdx);
                 break;
             }
 
          }
         
-         unitmove.calMoveRange(units[InTurnUnitID].Unit_y,units[InTurnUnitID].Unit_x,units[InTurnUnitID].MOV);
-        
-
-        
-        
-         
+         unitmove.calMoveRange(units[InTurnUnitIdx].Unit_y,units[InTurnUnitIdx].Unit_x,units[InTurnUnitIdx].MOV);
     }
-    int TurnTick()
-    {   int id=-1;
-        for(int i=0;i<6;i++)
-            {
-                if(units[i].IsMyTurn()) id=units[i].UnitID; 
-            } 
-        return id;
-    }
-
-    // Update is called once per frame
-    void Update()
+     // Update is called once per frame
+    private void Update()
     {
-        
+        if(Input.GetMouseButtonDown(0)) //ここら辺はクリックしたときにクリックした時の座標で
+        {
+            unitmove.calMoveRootandMove();
+        }
     }
+
+
+    private int TurnTick()
+    {   int idx=-1;
+        for(int i=0;i<partynumber;i++)
+            {
+                if(units[i].IsMyTurn()) idx=i; 
+            } 
+        return idx;
+    }
+
+   
+
+    public Unit[] getUnit()
+    {
+        return units;
+    }
+
+    public void changeUnitposi(int y,int x) //ゲームコードPosiも画像Posiも変えて行く必要があり
+    {
+        units[InTurnUnitIdx].MoveTo(y,x);
+        CharaManager.addMovePos(y,x);
+    }
+
+    
+    
     
 }

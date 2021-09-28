@@ -6,14 +6,16 @@ public class CharaManager : MonoBehaviour
 {
     [SerializeField]
     GameObject charaPrefab;
+     [SerializeField]
+    Sprite[] images= new Sprite[6]; //臨時。将来はキャラ召喚し装備で変えるやつをどこかにつくる
+    [SerializeField]
+    private BattleSceneManager scenemanager;
     
     //何をしてるかというとUnitMoveから送られてくる位置データをQueueに保存してそれでキャラをゆっくりと動かす
-    private static Queue<float> unitmovetox = new Queue<float>();
-    private static Queue<float> unitmovetoy = new Queue<float>();
+    private static Queue<Vector3> unitmoveto = new Queue<Vector3>();
     private GameObject chara;
     private bool nextmove= true;
-    private float unitnextmovex;
-    private float unitnextmovey;
+    private Vector3 unitnextmove;
 
     private Vector3 unitnextposition= new Vector3(0,0,0);
     private Vector3 unitnowposition= new Vector3(-1,1,0);
@@ -23,21 +25,33 @@ public class CharaManager : MonoBehaviour
     
     void Start() 
     {
-        chara = GameObject.Find("Chara");
+        
+        
+        for(int i=0;i<BattleSceneManager.partynumber;i++) //全キャラの生成
+        {   var units = scenemanager.getUnit();
+            string charaname= "Chara"+i;
+            GameObject charara = Instantiate(charaPrefab);    
+            charara.GetComponent<SpriteRenderer>().sprite = images[units[i].JOB];
+            charara.transform.position = units[i].GetPosition();
+            charara.name= charaname;
+        }
+
+        
+        
     }
     void Update()
     {
+        //臨時
         
-        
-        
+        string InTurnCharaname="Chara" + BattleSceneManager.InTurnUnitIdx;
+        chara = GameObject.Find(InTurnCharaname);
 
-        if (unitmovetox.Count != 0 && nextmove == true) //Queueを排出して、新しい位置を提示
+        if (unitmoveto.Count != 0 && nextmove == true) //Queueを排出して、新しい位置を提示
         {
             //Debug.Log("キャラ現在の位置"+chara.transform.position);
-            unitnextmovex =unitmovetox.Dequeue();
-            unitnextmovey =unitmovetoy.Dequeue();
+            unitnextmove =unitmoveto.Dequeue();
             //Debug.Log("Queue排出成功");
-            unitnextposition=new Vector3 (unitnextmovex,unitnextmovey,0f);
+            unitnextposition= unitnextmove;
             //Debug.Log(unitnextposition);
             //Debug.Log("距離："+ remdistance);
             nextmove = false;
@@ -48,6 +62,7 @@ public class CharaManager : MonoBehaviour
 
         if (remdistance<=0.5f)//キャラが目標マスに近づいたら目標マスに置いて次の指示を待つ
         {
+            
             chara.transform.position = unitnextposition;
            // unitnowposition = unitnextposition;
             nextmove = true;
@@ -63,7 +78,7 @@ public class CharaManager : MonoBehaviour
     {
         float floatx= (float)x;
         float floaty= (float)y;
-        unitmovetox.Enqueue(floatx);
-        unitmovetoy.Enqueue(floaty);
+        Vector3 posi = new Vector3(x,y,y);
+        unitmoveto.Enqueue(posi);
     }
 }

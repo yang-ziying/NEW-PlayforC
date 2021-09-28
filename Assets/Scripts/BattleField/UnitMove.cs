@@ -19,6 +19,9 @@ public class UnitMove : MonoBehaviour
     
     [SerializeField]
     private MapField mapfields;//ここにフィールドの情報入れておいた　今回の戦闘フィールドの　タイルごとの情報が入った二次元配列
+    [SerializeField]
+    BattleSceneManager scenemanager;
+    
 
     private MapTile[,] maptiles= new MapTile[12,24];　//マップフィールドの情報をそのまんま受け取る為の器
 
@@ -34,12 +37,13 @@ public class UnitMove : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        
        lengthy = maptiles.GetLength(0);
        lengthx = maptiles.GetLength(1); 
        resetMapmove();
        maptiles= mapfields.GetMaptiles();//こいつで今回のフィールドの情報を全てGET
 
-       changeUnitposi(5,5);　//changeUnitposi(y,x)でフィールドの情報更新、そしてCharaManagerに座標の目標位置まで動く命令
+       　//changeUnitposi(y,x)でフィールドの情報更新、そしてCharaManagerに座標の目標位置まで動く命令
     }
 
     // Update is called once per frame
@@ -117,7 +121,13 @@ public class UnitMove : MonoBehaviour
         
     }
 
-    public void calMoveRootandMove(int y,int x)//クリック場所の座標y,x
+    public void calMoveRootandMove()//OverLoad
+    {
+       
+        calMoveRootandMove(Tile.clicky, Tile.clickx);
+        
+    }
+    public void calMoveRootandMove(int y, int x)//クリック場所の座標y,x
     {
         
         //そこに移動できるかを判断
@@ -156,26 +166,26 @@ public class UnitMove : MonoBehaviour
             posistacky.Push(y);
 
         if (upstep == maxvalue ) {
-            Debug.Log("maxisup");
+            //Debug.Log("maxisup");
             calMoveRootandMove(y+1,x);
             
             return;
             
             }
         if (rightstep == maxvalue ) {
-            Debug.Log("maxisright");
+            //Debug.Log("maxisright");
             calMoveRootandMove(y,x+1);
             
             return;
             }
         if (downstep == maxvalue ) {
-            Debug.Log("maxisdown");
+            //Debug.Log("maxisdown");
             calMoveRootandMove(y-1,x);
             
             return;
             }
         if (leftstep == maxvalue ) {
-             Debug.Log("maxisleft");
+             //Debug.Log("maxisleft");
             calMoveRootandMove(y,x-1);
            
             return;
@@ -187,7 +197,7 @@ public class UnitMove : MonoBehaviour
                 {
                     int xx= posistackx.Pop();
                     int yy= posistacky.Pop();
-                   changeUnitposi(yy,xx);
+                    scenemanager.changeUnitposi(yy,xx);
                 }
             resetMapmove();//pop終わったらＭａｐｍｏｖｅは仕事終了なので何もないころに戻す
             
@@ -195,10 +205,5 @@ public class UnitMove : MonoBehaviour
 
     }
 
-    void changeUnitposi(int y,int x) //ゲームコードPosiも画像Posiも変えて行く必要があり
-    {
-        unitposix = x;
-        unitposiy = y;
-        CharaManager.addMovePos(y,x);
-    }
+   
 }

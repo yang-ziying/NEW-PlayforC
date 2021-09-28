@@ -153,6 +153,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mapfields: {fileID: 11400000, guid: f1bccce06f7228647a1bb6f150fae36f, type: 2}
+  scenemanager: {fileID: 708814645}
 --- !u!4 &15342270
 Transform:
   m_ObjectHideFlags: 0
@@ -519,7 +520,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 984a06f8aace72c4ba3ad331fae89c6c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  charaPrefab: {fileID: 0}
+  charaPrefab: {fileID: 7847018593797417570, guid: f96aefdd08919b74ba332c9d8af3e0f7, type: 3}
+  images:
+  - {fileID: 21300000, guid: 440e7c554692d6d4296f5fce1ed5b682, type: 3}
+  - {fileID: 21300000, guid: 06e3dbf694bceb644928e35d0564e9ab, type: 3}
+  - {fileID: 21300000, guid: e61f14e26fc7f034298c630451fa5ae2, type: 3}
+  - {fileID: 21300000, guid: 9af03e6ccdf397f4baf816c2d5608488, type: 3}
+  - {fileID: 21300000, guid: 3601807bb972c6940bee4a56b9440903, type: 3}
+  - {fileID: 21300000, guid: 2935154d877cc014dbd3bd9888f8cf09, type: 3}
+  scenemanager: {fileID: 708814645}
 --- !u!4 &611205113
 Transform:
   m_ObjectHideFlags: 0
@@ -711,6 +720,10 @@ PrefabInstance:
     - target: {fileID: 7847018593797417570, guid: f96aefdd08919b74ba332c9d8af3e0f7, type: 3}
       propertyPath: m_Name
       value: Chara
+      objectReference: {fileID: 0}
+    - target: {fileID: 7847018593797417571, guid: f96aefdd08919b74ba332c9d8af3e0f7, type: 3}
+      propertyPath: m_SpriteSortPoint
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7847018593797417572, guid: f96aefdd08919b74ba332c9d8af3e0f7, type: 3}
       propertyPath: m_RootOrder
