@@ -12,15 +12,23 @@ public class CharaManager : MonoBehaviour
     private BattleSceneManager scenemanager;
     
     //何をしてるかというとUnitMoveから送られてくる位置データをQueueに保存してそれでキャラをゆっくりと動かす
-    private static Queue<Vector3> unitmoveto = new Queue<Vector3>();
-    private GameObject chara;
+    private Queue<Vector3> moveRoot = new Queue<Vector3>();
+   
     private bool nextmove= true;
-    private Vector3 unitnextmove;
 
-    private Vector3 unitnextposition= new Vector3(0,0,0);
-    private Vector3 unitnowposition= new Vector3(-1,1,0);
-    
+    private Vector3[] unitnextposition= new Vector3[BattleSceneManager.partynumber]; //これが０００なのでどこかでキャラの現在位置を呼び出しておく必要がある
+    private Vector3 charaLastPosition = new Vector3();
+
     private float remdistance;
+    
+
+    private string inTurnCharaname;
+    private GameObject inTurnChara;
+    private int inTurnID;
+
+    private bool CanCharaMove= false;
+
+
     // Update is called once per frame  
     
     void Start() 
@@ -33,52 +41,68 @@ public class CharaManager : MonoBehaviour
             GameObject charara = Instantiate(charaPrefab);    
             charara.GetComponent<SpriteRenderer>().sprite = images[units[i].JOB];
             charara.transform.position = units[i].GetPosition();
+            unitnextposition[i]=units[i].GetPosition();
             charara.name= charaname;
+            
         }
+       
 
         
         
     }
     void Update()
     {
-        //臨時
-        
-        string InTurnCharaname="Chara" + BattleSceneManager.InTurnUnitIdx;
-        chara = GameObject.Find(InTurnCharaname);
-
-        if (unitmoveto.Count != 0 && nextmove == true) //Queueを排出して、新しい位置を提示
-        {
-            //Debug.Log("キャラ現在の位置"+chara.transform.position);
-            unitnextmove =unitmoveto.Dequeue();
-            //Debug.Log("Queue排出成功");
-            unitnextposition= unitnextmove;
-            //Debug.Log(unitnextposition);
-            //Debug.Log("距離："+ remdistance);
-            nextmove = false;
-
-        }
-
-        remdistance = Vector3.Distance(chara.transform.position,unitnextposition); //新しい位置と現在位置の距離を求める
-
-        if (remdistance<=0.5f)//キャラが目標マスに近づいたら目標マスに置いて次の指示を待つ
-        {
-            
-            chara.transform.position = unitnextposition;
-           // unitnowposition = unitnextposition;
-            nextmove = true;
-        }
-        
-        chara.transform.position = Vector3.Lerp(chara.transform.position,unitnextposition,3f*Time.deltaTime);　//キャラの座標を目標位置に向けてゆっくり動かす
+        if(CanCharaMove) CharaMove();
+        　//キャラの座標を目標位置に向けてゆっくり動かす
         
             
     }
-      
-    
-    public static void addMovePos(int y,int x)
+    private void CharaMove()
     {
-        float floatx= (float)x;
-        float floaty= (float)y;
-        Vector3 posi = new Vector3(x,y,y);
-        unitmoveto.Enqueue(posi);
+        if (moveRoot.Count != 0 && nextmove == true) //Queueを排出して、新しい位置を提示
+        {
+            unitnextposition[inTurnID]= moveRoot.Dequeue();
+            nextmove = false;
+        } 
+        inTurnChara.transform.position = Vector3.Lerp(inTurnChara.transform.position,unitnextposition[inTurnID],3f*Time.deltaTime); //新しい位置までゆっくり移動
+
+        remdistance = Vector3.Distance(inTurnChara.transform.position,unitnextposition[inTurnID]); //新しい位置と現在位置の距離を求める
+
+        if (remdistance<=0.5f)//キャラが目標マスに近づいたら目標マスに置いて次の指示を待つ
+        {
+            inTurnChara.transform.position = unitnextposition[inTurnID];
+            nextmove = true;
+        }
+        
+       if(charaLastPosition==inTurnChara.transform.position)
+             {
+                 Debug.Log("charalastposi"+charaLastPosition);
+                 Debug.Log("charaposi"+inTurnChara.transform.position);
+                 CanCharaMove=false;
+                 scenemanager.IsReadyToNextTurn=true;
+                 nextmove=true; //nextmoveのリセット
+             }
+        
+
+       
+          
+
+    }
+
+    
+    public void SetinTurnChara(int InturnUnitIdx)
+    {
+        inTurnCharaname="Chara" + InturnUnitIdx;
+        inTurnChara = GameObject.Find(inTurnCharaname);
+        inTurnID= InturnUnitIdx;
+        
+    } 
+    
+    public void SetMoveRoot(Queue<Vector3> root,Vector3 lastPosition)
+    {
+        moveRoot=root;
+        charaLastPosition=lastPosition;  
+        CanCharaMove = true;
+        
     }
 }

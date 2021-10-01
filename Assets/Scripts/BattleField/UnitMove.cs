@@ -131,7 +131,7 @@ public class UnitMove : MonoBehaviour
     {
         
         //そこに移動できるかを判断
-        //移動できなかった場合即座に終了
+        //移動できなかった場合何も発生させない
         int thisstep=mapmove[y,x];
         if (thisstep<0) {
             return;
@@ -193,17 +193,15 @@ public class UnitMove : MonoBehaviour
         }
         else
         {
-            for( int i= posistackx.Count ; i>0; i--)  //さっきＳｔａｃｋした全部をＰｏｐしていく
-                {
-                    int xx= posistackx.Pop();
-                    int yy= posistacky.Pop();
-                    scenemanager.changeUnitposi(yy,xx);
-                }
+            scenemanager.SetPosiStack(posistacky,posistackx);
+                
             resetMapmove();//pop終わったらＭａｐｍｏｖｅは仕事終了なので何もないころに戻す
+            
             
         }
 
     }
+
 
    
 }
