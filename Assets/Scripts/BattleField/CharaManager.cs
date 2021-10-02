@@ -90,11 +90,11 @@ public class CharaManager : MonoBehaviour
     }
 
     
-    public void SetinTurnChara(int InturnUnitIdx)
+    public void SetinTurnChara(int InTurnUnitIdx)
     {
-        inTurnCharaname="Chara" + InturnUnitIdx;
+        inTurnCharaname="Chara" + InTurnUnitIdx;
         inTurnChara = GameObject.Find(inTurnCharaname);
-        inTurnID= InturnUnitIdx;
+        inTurnID= InTurnUnitIdx;
         
     } 
     

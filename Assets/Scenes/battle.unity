@@ -154,6 +154,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mapfields: {fileID: 11400000, guid: f1bccce06f7228647a1bb6f150fae36f, type: 2}
   scenemanager: {fileID: 708814645}
+  unitmaptile: {fileID: 11400000, guid: 6a291d83d4eb6784c8cda1485ec38a23, type: 2}
+  enemymaptile: {fileID: 11400000, guid: 7a4501ae92ed54247a1d31a6c527e81d, type: 2}
 --- !u!4 &15342270
 Transform:
   m_ObjectHideFlags: 0

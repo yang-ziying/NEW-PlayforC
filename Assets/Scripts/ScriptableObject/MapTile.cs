@@ -24,7 +24,7 @@ public class MapTile : ScriptableObject {
     private Sprite TileImage;
 
     
-    public int movement{get=>Movement;}
+    public int movement{get=>Movement; set=>movement=value;}
     public int movementAir{get=>MovementAir;}
     public int movementHorse{get=>MovementHorse;}
     public int movementShip{get=>MovementShip;}

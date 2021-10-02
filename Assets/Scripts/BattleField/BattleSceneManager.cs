@@ -137,13 +137,14 @@ public class BattleSceneManager : MonoBehaviour
         {
              IsReadyToNextTurn=false;
              TurnTick();
+             unitmove.getMaptilesInfo(units);
              unitmove.calMoveRange(units[InTurnUnitIdx].Unit_y,units[InTurnUnitIdx].Unit_x,units[InTurnUnitIdx].MOV);
              
         }
        
         if(Input.GetMouseButtonDown(0)) //ここら辺はクリックしたときにクリックした時の座標で
         {
-            unitmove.calMoveRootandMove();
+            unitmove.calMoveRootandMove(units,InTurnUnitIdx);
         }
     }
 
@@ -203,6 +204,15 @@ public class BattleSceneManager : MonoBehaviour
        charamanager.SetMoveRoot(unitmoveRoot,lastPosition);
        
 
+    }
+    public bool[,]  TellOtherMembersPosition()
+    {
+        bool[,] IsOtherUnitThere= new bool[12,24];
+        for(int i=0;i<partynumber;i++)
+        {
+           if( i!= InTurnUnitIdx) IsOtherUnitThere[units[i].Unit_y,units[i].Unit_x]=true;
+        }
+        return IsOtherUnitThere;
     }
 
     

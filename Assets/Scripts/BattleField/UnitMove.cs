@@ -7,13 +7,7 @@ using System.Linq;
 public class UnitMove : MonoBehaviour
 {
    
-    private int unitposix; //unitposiは内でルートを踏んで動くが動画の方はSeneManegerに任せる
-    private int unitposiy; //そのためunitposiが示しているのは実際の位置（動画は故意にラグる）
-
-   
-
-   
-    public static int[,] mapmove = new int[12,24]; //☆こいつに座標の移動ステータスが含まれている STATIC
+    private static int[,] mapmove = new int[12,24]; //☆こいつに座標の移動ステータスが含まれている STATIC
 
 
     
@@ -21,6 +15,10 @@ public class UnitMove : MonoBehaviour
     private MapField mapfields;//ここにフィールドの情報入れておいた　今回の戦闘フィールドの　タイルごとの情報が入った二次元配列
     [SerializeField]
     BattleSceneManager scenemanager;
+    [SerializeField]
+    MapTile unitmaptile;
+    [SerializeField]
+    MapTile enemymaptile;
     
 
     private MapTile[,] maptiles= new MapTile[12,24];　//マップフィールドの情報をそのまんま受け取る為の器
@@ -41,32 +39,12 @@ public class UnitMove : MonoBehaviour
        lengthy = maptiles.GetLength(0);
        lengthx = maptiles.GetLength(1); 
        resetMapmove();
-       maptiles= mapfields.GetMaptiles();//こいつで今回のフィールドの情報を全てGET
-
        　//changeUnitposi(y,x)でフィールドの情報更新、そしてCharaManagerに座標の目標位置まで動く命令
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+    public static int[,] GetMapmve{get=>mapmove;}
 
-        if(Input.GetMouseButtonDown(0)) //ここら辺はクリックしたときにクリックした時の座標で
-        {
-            
-
-           
-                //calMoveRange(unitposiy,unitposix,5);　//移動できる全ての座標をＭａｐｍｏｖｅに書き込み赤くする,現在座標y、x、プレイヤー移動残り
-                
-           
-            
-                //calMoveRootandMove(Tile.clicky,Tile.clickx); //Tileがクリックされたｘｙを元に動けるか判断して動ける場合は動いてＭａｐｍｏｖｅ終了、動けない場合はなにもせず終了 
-               
-           
-        }
-    
-
-    }
+ 
     private void resetMapmove() //全てのMAPMOVEを-1に戻す
     {
         for(int x=0; x<24; x++){
@@ -76,9 +54,23 @@ public class UnitMove : MonoBehaviour
             }
         }
     }
+    public void getMaptilesInfo(Unit[] units) //calmoverangeと同時に使用、Rangeの一番最初に1回出現、その後Rangeループ
+    {
+         maptiles= mapfields.GetMaptiles();//こいつで今回のフィールドの情報を全てGET　毎回ゲットしてプレイヤー・モンスターがいる場所とその周りを変更
+        //for(int i=0;i<BattleSceneManager.partynumber;i++) //敵用でしたわ
+        //{   
+        //    int x=units[i].Unit_x;
+        //    int y=units[i].Unit_y;
+        //    maptiles[y,x]= unitmaptile;
+        //}
+         
+    }
 
     public void calMoveRange(int y,int x,int moverem)//現在座標y、x、プレイヤー移動残り
     {
+       
+        
+
         
       int sabunUp = 0;
       int sabunRight = 0;
@@ -121,23 +113,25 @@ public class UnitMove : MonoBehaviour
         
     }
 
-    public void calMoveRootandMove()//OverLoad
+    public void calMoveRootandMove(Unit[] units,int unitidx)　//OverLoad 全てのキャラ、現在のキャラのUnitsでの位置
     {
-       
+       for(int i=0;i<BattleSceneManager.partynumber;i++) 
+        {   
+            int unitx=units[i].Unit_x;
+            int unity=units[i].Unit_y;
+            if (unitx == Tile.clickx && unity == Tile.clicky && unitidx != i) return;
+        }
+        int clicklocation=mapmove[Tile.clicky,Tile.clickx];
+        if (clicklocation<0) {
+            return;
+        } //そこに移動できるかを判断
+        //移動できなかった場合何も発生させない
         calMoveRootandMove(Tile.clicky, Tile.clickx);
         
     }
-    public void calMoveRootandMove(int y, int x)//クリック場所の座標y,x
+    public void calMoveRootandMove(int y, int x)//クリック場所の座標y,x 全ユニット情報
     {
-        
-        //そこに移動できるかを判断
-        //移動できなかった場合何も発生させない
         int thisstep=mapmove[y,x];
-        if (thisstep<0) {
-            return;
-        }
-
-
         //本題。周り4マスをまず移動出来るか判断。もし端っこだった場合(lengthが飛び出てた場合)、移動できないマスとして-1を代入
         //移動できるマスならmapmove[目標マス]の情報を拾ってくる。0から始まって増えていくやつや
         int upstep;

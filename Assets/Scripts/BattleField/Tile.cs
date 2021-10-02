@@ -13,14 +13,17 @@ public class Tile : MonoBehaviour
     GameObject movetile;
     public static int clickx;
     public static int clicky;
+    private BattleSceneManager scenemanager;
+
     // Start is called before the first frame update
     void Start()
     {
         
-        array = UnitMove.mapmove;
+        array = UnitMove.GetMapmve;　//すごく・・・参照型です・・・
         thisx = (int)transform.position.x;
         thisy = (int)transform.position.y;
         movetile = transform.Find("hantoumei").gameObject;
+        scenemanager=GameObject.Find("SceneManager").GetComponent<BattleSceneManager>();
         //Debug.Log(thisx +","+thisy);
         //Debug.Log(array[thisy,thisx]);
         
@@ -29,7 +32,8 @@ public class Tile : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(array[thisy,thisx] <0 ) movetile.SetActive (false);
+        bool[,] IsOtherUnitThere=   scenemanager.TellOtherMembersPosition();
+        if(array[thisy,thisx] <0 || IsOtherUnitThere[thisy,thisx] ) movetile.SetActive (false);
         else movetile.SetActive (true);
 
         
