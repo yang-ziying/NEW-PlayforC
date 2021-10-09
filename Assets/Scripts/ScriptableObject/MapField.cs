@@ -9,6 +9,10 @@ public class MapField : ScriptableObject {
     private List<MapTile> Maptiles= new List<MapTile>();
     [SerializeField]
     private string Mapname;
+    //[SerializeField]
+    //private List <Monster> monsters = new List<Monster>();
+
+
     
     private MapTile[,] Field = new MapTile[12,24];
 

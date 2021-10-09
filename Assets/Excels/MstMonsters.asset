@@ -1,0 +1,84 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 8
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 797463a7b8948064abf6c2d77929d406, type: 3}
+  m_Name: MstMonsters
+  m_EditorClassIdentifier: 
+  Entities:
+  - id: 0
+    name: "\u3077\u307E"
+    type: normal
+    u_Lv: 1
+    u_vit: 10
+    u_str: 5
+    u_dex: 3
+    u_agi: 4
+    u_luk: 8
+    u_int: 2
+    u_wis: 2
+    u_men: 2
+    u_mov: 4
+    u_hit: 5
+    u_avd: 5
+    u_cri: 5
+    u_cha: 5
+    u_rehp: 3
+    u_remp: 2
+    dropid_high: 4
+    dropid_low: 3
+    dropid_rare: 2
+    dropid_special: 1
+  - id: 1
+    name: "\u3072\u3064\u3058\u3050\u3082"
+    type: normal
+    u_Lv: 1
+    u_vit: 3
+    u_str: 3
+    u_dex: 4
+    u_agi: 3
+    u_luk: 4
+    u_int: 8
+    u_wis: 10
+    u_men: 6
+    u_mov: 3
+    u_hit: 5
+    u_avd: 5
+    u_cri: 5
+    u_cha: 10
+    u_rehp: 1
+    u_remp: 5
+    dropid_high: 8
+    dropid_low: 7
+    dropid_rare: 6
+    dropid_special: 5
+  - id: 2
+    name: "\u3057\u308D\u308D\u3093"
+    type: fly
+    u_Lv: 5
+    u_vit: 20
+    u_str: 10
+    u_dex: 5
+    u_agi: 6
+    u_luk: 3
+    u_int: 7
+    u_wis: 10
+    u_men: 10
+    u_mov: 5
+    u_hit: 5
+    u_avd: 5
+    u_cri: 5
+    u_cha: 5
+    u_rehp: 10
+    u_remp: 10
+    dropid_high: 12
+    dropid_low: 11
+    dropid_rare: 10
+    dropid_special: 9

@@ -21,7 +21,10 @@ public class FieldGenerator : MonoBehaviour
                 
                 GameObject Maketile = Instantiate(tilePrefab);
                 Maketile.GetComponent<SpriteRenderer>().sprite = maptiles[y,x].tileImage;
-                Maketile.transform.position = new Vector3(x,y,0);
+                Vector3 tilescale= new Vector3(1,1,1);
+                Maketile.transform.localScale=tilescale; 
+                Maketile.transform.position = new Vector3(x*32,y*32,y);
+                
             }
         }
     }

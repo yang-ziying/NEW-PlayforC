@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
 [System.Serializable]
 public class UnitInfo
 {
@@ -12,7 +13,6 @@ public class UnitInfo
     public int[] u_hp= new int[100];
     public int[] u_mp= new int[100];
     public int[] u_exp = new int [100];
-    public int[] u_job = new int [100];
     public int[] u_vit = new int [100];
     public int[] u_str = new int [100];
     public int[] u_dex = new int [100];
@@ -22,6 +22,7 @@ public class UnitInfo
     public int[] u_wis = new int [100];
     public int[] u_men = new int [100];
     public int[] u_mov = new int [100];
+    public int[] u_job = new int [100];
     public int[] u_gender = new int [100];
     //public int[] u_hair = new int [100];
     //public int[] u_skin = new int [100];

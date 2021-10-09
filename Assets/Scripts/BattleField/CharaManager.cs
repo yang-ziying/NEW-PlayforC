@@ -9,6 +9,9 @@ public class CharaManager : MonoBehaviour
      [SerializeField]
     Sprite[] images= new Sprite[6]; //臨時。将来はキャラ召喚し装備で変えるやつをどこかにつくる
     [SerializeField]
+    Sprite[] MBimages= new Sprite[3];//臨時
+
+    [SerializeField]
     private BattleSceneManager scenemanager;
     
     //何をしてるかというとUnitMoveから送られてくる位置データをQueueに保存してそれでキャラをゆっくりと動かす
@@ -16,7 +19,7 @@ public class CharaManager : MonoBehaviour
    
     private bool nextmove= true;
 
-    private Vector3[] unitnextposition= new Vector3[BattleSceneManager.partynumber]; //これが０００なのでどこかでキャラの現在位置を呼び出しておく必要がある
+    private List<Vector3> unitnextposition= new List<Vector3>(); //これが０００なのでどこかでキャラの現在位置を呼び出しておく必要がある
     private Vector3 charaLastPosition = new Vector3();
 
     private float remdistance;
@@ -35,14 +38,27 @@ public class CharaManager : MonoBehaviour
     {
         
         
-        for(int i=0;i<BattleSceneManager.partynumber;i++) //全キャラの生成
+        for(int i=0;i<BattleSceneManager.allunitnumber;i++) //全キャラの生成
         {   var units = scenemanager.getUnit();
             string charaname= "Chara"+i;
-            GameObject charara = Instantiate(charaPrefab);    
-            charara.GetComponent<SpriteRenderer>().sprite = images[units[i].JOB];
+            GameObject charara = Instantiate(charaPrefab);   
+            
+            if(units[i].Team=="player")
+            {
+               
+                charara.GetComponent<SpriteRenderer>().sprite = images[units[i].JOB];
+                
+            }
+            else if (units[i].Team == "enemy")
+            {
+                charara.GetComponent<SpriteRenderer>().sprite = MBimages[units[i].JOB];
+            }
+           Vector3 charascale= new Vector3(1,1,1);
+            charara.transform.localScale=charascale; 
             charara.transform.position = units[i].GetPosition();
-            unitnextposition[i]=units[i].GetPosition();
-            charara.name= charaname;
+                unitnextposition.Add(units[i].GetPosition());
+                charara.name= charaname;
+
             
         }
        
@@ -63,12 +79,16 @@ public class CharaManager : MonoBehaviour
         {
             unitnextposition[inTurnID]= moveRoot.Dequeue();
             nextmove = false;
+            
         } 
         inTurnChara.transform.position = Vector3.Lerp(inTurnChara.transform.position,unitnextposition[inTurnID],3f*Time.deltaTime); //新しい位置までゆっくり移動
 
         remdistance = Vector3.Distance(inTurnChara.transform.position,unitnextposition[inTurnID]); //新しい位置と現在位置の距離を求める
+        Vector3 MoveVector=unitnextposition[inTurnID]-inTurnChara.transform.position;
+        if (MoveVector.x>0)　inTurnChara.transform.localScale=new Vector3(-1,1,1); //キャラ画像方向転換
+        else if(MoveVector.x<0)inTurnChara.transform.localScale=new Vector3(1,1,1);
 
-        if (remdistance<=0.5f)//キャラが目標マスに近づいたら目標マスに置いて次の指示を待つ
+        if (remdistance<=5f)//キャラが目標マスに近づいたら目標マスに置いて次の指示を待つ
         {
             inTurnChara.transform.position = unitnextposition[inTurnID];
             nextmove = true;
@@ -94,6 +114,7 @@ public class CharaManager : MonoBehaviour
     {
         inTurnCharaname="Chara" + InTurnUnitIdx;
         inTurnChara = GameObject.Find(inTurnCharaname);
+        MoveCamera.SetCamera(inTurnChara);
         inTurnID= InTurnUnitIdx;
         
     } 

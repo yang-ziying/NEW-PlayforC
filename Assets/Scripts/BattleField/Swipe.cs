@@ -22,8 +22,8 @@ public class Swipe : MonoBehaviour
              deltaY = (start - end).y;
         }
         mainCamera.transform.Translate (deltaX * Time.deltaTime, deltaY * Time.deltaTime, 0f);
-        deltaX *= 0.9f;
-        deltaY *= 0.9f;
+        deltaX *= 0.95f;
+        deltaY *= 0.95f;
     }
 
 }
