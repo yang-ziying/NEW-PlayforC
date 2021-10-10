@@ -67,7 +67,7 @@ public class Unit
     }
     public Vector3 GetPosition()
     {
-        Vector3 position=new Vector3(unit_x*32,unit_y*32,unit_y); //zを故意に指定している。重複問題に関わる。
+        Vector3 position=new Vector3(((float)unit_x)/2.5f,((float)unit_y)/2.5f,unit_y); //*32zを故意に指定している。重複問題に関わる。
         return position;
     }
 
@@ -105,6 +105,9 @@ public class Unit
    
 }
 
+//-------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------
 
 public class BattleSceneManager : MonoBehaviour
 {
@@ -113,15 +116,13 @@ public class BattleSceneManager : MonoBehaviour
     
     public static int partynumber = 6; //臨時　パーティーのキャラ数
     public static int monsternumber = 3;//臨時　モンスターのキャラ数 今は図鑑からＩＤを直接取り出してる。どこかでモンスター複製しとかないと話が進まない（やるべき）
-    public static int allunitnumber;
+    public static int allunitnumber;　
+    private int[,] mapunit = new int[12,24]; //map上のunit位置情報 中にある数字はunits[]のindex number　前partynumberの量だけ味方、（数字が大きめの）後ろが敵　現在Mapunitは毎ターンの開始時に1度だけリセットされ更新されている
 
     private Unit[] units = new Unit[partynumber+monsternumber];
      //unitposi管理をSceneManegerで行う　画像はCharaManager
 
-    
    
-   
-
     private GameObject unitmoveobj;
     private UnitMove unitmove;
     private UnitInfo allunitinfo;
@@ -138,7 +139,7 @@ public class BattleSceneManager : MonoBehaviour
 
 
    
-    void Awake() //Startだと他のManagerにUnits[]渡すの間に合わない。Unitの定義のみAwakeが必要
+    void Awake() //Startだと他のManagerにUnits[]渡すの間に合わない。Unitの定義のみAwakeが必要 ☆これでバグが起きそうだからいつか全呼び出しをここで行うようにしないといけないかも
     {
         
         unitmoveobj= GameObject.Find("UnitMove");      
@@ -177,6 +178,7 @@ public class BattleSceneManager : MonoBehaviour
         {
              IsReadyToNextTurn=false;
              TurnTick();
+             UpdateMapunit();
              unitmove.getMaptilesInfo(units);
              unitmove.calMoveRange(units[InTurnUnitIdx].Unit_y,units[InTurnUnitIdx].Unit_x,units[InTurnUnitIdx].MOV);
              
@@ -184,7 +186,7 @@ public class BattleSceneManager : MonoBehaviour
        
         if(Input.GetMouseButtonDown(0)) //ここら辺はクリックしたときにクリックした時の座標で
         {
-            unitmove.calMoveRootandMove(units,InTurnUnitIdx);
+            unitmove.calMoveRootandMove(mapunit,InTurnUnitIdx);
         }
     }
 
@@ -209,6 +211,27 @@ public class BattleSceneManager : MonoBehaviour
          }  
     }
 
+    public void UpdateMapunit()
+    {
+       for(int x=0; x<24; x++){
+            for(int y=0; y<12;y++){
+                mapunit[y,x]=-1;
+            }
+        }    
+        for(int i=0;i<allunitnumber;i++)
+            {
+               mapunit[units[i].Unit_y,units[i].Unit_x]=i;
+            } 
+    }
+    public bool IsOtherUnitHere(int y, int x)
+    {
+        bool HasSomeoneHere = false;
+        
+        if(mapunit[y,x]>=0 && mapunit[y,x]!=InTurnUnitIdx) HasSomeoneHere = true;
+       
+        return HasSomeoneHere;
+    }
+
    
 
     public Unit[] getUnit()
@@ -228,14 +251,14 @@ public class BattleSceneManager : MonoBehaviour
             int y= stacky.Pop();
              if (i==1) //ラストポジションは覚えておく
             {
-                lastPosition = new Vector3(x*32,y*32,y);
+                lastPosition = new Vector3(((float)x)/2.5f,((float)y)/2.5f,y);//*1f
                 Debug.Log(lastPosition);
             }
             units[InTurnUnitIdx].MoveTo(y,x);
             float floatx= (float)x;
             float floaty= (float)y;
 
-            Vector3 posi = new Vector3(floatx*32,floaty*32,floaty);
+            Vector3 posi = new Vector3(floatx/2.5f,floaty/2.5f,floaty);//*1f
             unitmoveRoot.Enqueue(posi);
 
            
@@ -245,15 +268,7 @@ public class BattleSceneManager : MonoBehaviour
        
 
     }
-    public bool[,]  TellOtherMembersPosition()
-    {
-        bool[,] IsOtherUnitThere= new bool[12,24];
-        for(int i=0;i<allunitnumber;i++)
-        {
-           if( i!= InTurnUnitIdx) IsOtherUnitThere[units[i].Unit_y,units[i].Unit_x]=true;
-        }
-        return IsOtherUnitThere;
-    }
+    
 
     
     

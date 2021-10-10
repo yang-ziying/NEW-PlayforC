@@ -17,4 +17,4 @@ MonoBehaviour:
   MovementHorse: 2
   MovementShip: 100
   TileName: "\u9577\u3044\u8349\u5730"
-  TileImage: {fileID: 21300000, guid: e063ea782c2bd7f4cbe167daa5fd4deb, type: 3}
+  TileImage: {fileID: 8963900995307239896, guid: d55e7f63d6bea52438b76c1f128be9a8, type: 3}

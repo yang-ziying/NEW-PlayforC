@@ -88,7 +88,7 @@ public class CharaManager : MonoBehaviour
         if (MoveVector.x>0)　inTurnChara.transform.localScale=new Vector3(-1,1,1); //キャラ画像方向転換
         else if(MoveVector.x<0)inTurnChara.transform.localScale=new Vector3(1,1,1);
 
-        if (remdistance<=5f)//キャラが目標マスに近づいたら目標マスに置いて次の指示を待つ
+        if (remdistance<=0.05f)//キャラが目標マスに近づいたら目標マスに置いて次の指示を待つ
         {
             inTurnChara.transform.position = unitnextposition[inTurnID];
             nextmove = true;

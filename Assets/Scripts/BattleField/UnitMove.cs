@@ -113,14 +113,12 @@ public class UnitMove : MonoBehaviour
         
     }
 
-    public void calMoveRootandMove(Unit[] units,int unitidx)　//OverLoad 全てのキャラ、現在のキャラのUnitsでの位置
+    public void calMoveRootandMove(int[,] mapunit,int unitidx)　//OverLoad 全てのキャラ、現在のキャラのUnitsでの位置
     {
-       for(int i=0;i<BattleSceneManager.partynumber;i++) 
-        {   
-            int unitx=units[i].Unit_x;
-            int unity=units[i].Unit_y;
-            if (unitx == Tile.clickx && unity == Tile.clicky && unitidx != i) return;
-        }
+         
+          int mapunitClickIdx=mapunit[Tile.clicky,Tile.clickx];
+          if (mapunitClickIdx != unitidx && mapunitClickIdx >=0) return; //そこに自分自身じゃないキャラがいたらReturn
+
         int clicklocation=mapmove[Tile.clicky,Tile.clickx];
         if (clicklocation<0) {
             return;

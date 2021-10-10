@@ -7,6 +7,8 @@ public class FieldGenerator : MonoBehaviour
     [SerializeField]
     //public List<MapTile>[,] fieldmaplist = new List<MapTile>[12,6];
     private MapField mapfields;
+
+    private Tile maketilescript;
     
     [SerializeField]
     private GameObject tilePrefab;
@@ -23,7 +25,12 @@ public class FieldGenerator : MonoBehaviour
                 Maketile.GetComponent<SpriteRenderer>().sprite = maptiles[y,x].tileImage;
                 Vector3 tilescale= new Vector3(1,1,1);
                 Maketile.transform.localScale=tilescale; 
-                Maketile.transform.position = new Vector3(x*32,y*32,y);
+                Maketile.transform.position = new Vector3(((float)x)/2.5f,((float)y)/2.5f,y);//*1f
+                maketilescript = Maketile.GetComponent<Tile>();
+                maketilescript.thisx = x;
+                maketilescript.thisy = y;
+                
+                
                 
             }
         }
