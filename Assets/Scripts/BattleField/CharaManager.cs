@@ -34,7 +34,7 @@ public class CharaManager : MonoBehaviour
 
     // Update is called once per frame  
     
-    void Start() 
+    public void PrepareStart() 
     {
         
         
@@ -99,7 +99,8 @@ public class CharaManager : MonoBehaviour
                  Debug.Log("charalastposi"+charaLastPosition);
                  Debug.Log("charaposi"+inTurnChara.transform.position);
                  CanCharaMove=false;
-                 scenemanager.IsReadyToNextTurn=true;
+                 //scenemanager.IsReadyToNextTurn=true;
+                 scenemanager.IsReadyToAttack=true;
                  nextmove=true; //nextmoveのリセット
              }
         

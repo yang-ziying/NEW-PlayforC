@@ -117,21 +117,25 @@ public class BattleSceneManager : MonoBehaviour
     public static int partynumber = 6; //臨時　パーティーのキャラ数
     public static int monsternumber = 3;//臨時　モンスターのキャラ数 今は図鑑からＩＤを直接取り出してる。どこかでモンスター複製しとかないと話が進まない（やるべき）
     public static int allunitnumber;　
-    private int[,] mapunit = new int[12,24]; //map上のunit位置情報 中にある数字はunits[]のindex number　前partynumberの量だけ味方、（数字が大きめの）後ろが敵　現在Mapunitは毎ターンの開始時に1度だけリセットされ更新されている
+
+    private int[,] mapunitID = new int[12,24]; //map上のunit位置情報 中にある数字はunits[]のindex number　前partynumberの量だけ味方、（数字が大きめの）後ろが敵　現在Mapunitは毎ターンの開始時に1度だけリセットされ更新されている
+    private string[,] mapunitTeam = new string[12,24];
 
     private Unit[] units = new Unit[partynumber+monsternumber];
      //unitposi管理をSceneManegerで行う　画像はCharaManager
 
    
-    private GameObject unitmoveobj;
     private UnitMove unitmove;
+    private UnitAttack unitattack;
     private UnitInfo allunitinfo;
     private CharaManager charamanager;
+    
 
 
     public static int InTurnUnitIdx; //現在のターンのUnitのINDEXNUMBER
     
     public bool IsReadyToNextTurn= true;
+    public bool IsReadyToAttack= false;
     
     private Queue<Vector3> unitmoveRoot = new Queue<Vector3>();
 
@@ -142,9 +146,15 @@ public class BattleSceneManager : MonoBehaviour
     void Awake() //Startだと他のManagerにUnits[]渡すの間に合わない。Unitの定義のみAwakeが必要 ☆これでバグが起きそうだからいつか全呼び出しをここで行うようにしないといけないかも
     {
         
-        unitmoveobj= GameObject.Find("UnitMove");      
-        unitmove=unitmoveobj.GetComponent<UnitMove>();
-
+        
+         
+     
+         
+    }
+    private void Start() 
+    {  
+        unitmove=GameObject.Find("UnitMove").GetComponent<UnitMove>();
+        unitattack=GameObject.Find("UnitAttack").GetComponent<UnitAttack>();
         charamanager = GameObject.Find("CharaManager").GetComponent<CharaManager>();
 
         allunitinfo = UnitInfo.CreateFromSaveData();
@@ -167,10 +177,14 @@ public class BattleSceneManager : MonoBehaviour
             units[i+partynumber].MoveTo(i+4,i+6);
         }
          //Array.Sort(units, (a, b) => b.SPD - a.SPD);
-         
-     
-         
+
+        
+        unitmove.PrepareStart();
+        charamanager.PrepareStart();
+        unitattack.PrepareStart();
+       
     }
+
      // Update is called once per frame
     private void Update()
     {
@@ -179,14 +193,21 @@ public class BattleSceneManager : MonoBehaviour
              IsReadyToNextTurn=false;
              TurnTick();
              UpdateMapunit();
-             unitmove.getMaptilesInfo(units);
              unitmove.calMoveRange(units[InTurnUnitIdx].Unit_y,units[InTurnUnitIdx].Unit_x,units[InTurnUnitIdx].MOV);
              
         }
        
         if(Input.GetMouseButtonDown(0)) //ここら辺はクリックしたときにクリックした時の座標で
         {
-            unitmove.calMoveRootandMove(mapunit,InTurnUnitIdx);
+            unitmove.calMoveRootandMove(mapunitID,InTurnUnitIdx);
+            unitattack.GetUnitAttacked(mapunitID,units[InTurnUnitIdx].Team);
+
+        }
+
+        if(IsReadyToAttack)
+        {
+            IsReadyToAttack = false;
+            unitattack.CalAttackRange(units[InTurnUnitIdx].Unit_y,units[InTurnUnitIdx].Unit_x,3,4);
         }
     }
 
@@ -213,21 +234,25 @@ public class BattleSceneManager : MonoBehaviour
 
     public void UpdateMapunit()
     {
+        //Reset MapArray
        for(int x=0; x<24; x++){
             for(int y=0; y<12;y++){
-                mapunit[y,x]=-1;
+                mapunitID[y,x]=-1;
+                mapunitTeam[y,x]="";
             }
         }    
+        //Change MapArray
         for(int i=0;i<allunitnumber;i++)
             {
-               mapunit[units[i].Unit_y,units[i].Unit_x]=i;
+               mapunitID[units[i].Unit_y,units[i].Unit_x]=i;
+               mapunitTeam[units[i].Unit_y,units[i].Unit_x]=units[i].Team;
             } 
     }
     public bool IsOtherUnitHere(int y, int x)
     {
         bool HasSomeoneHere = false;
         
-        if(mapunit[y,x]>=0 && mapunit[y,x]!=InTurnUnitIdx) HasSomeoneHere = true;
+        if(mapunitID[y,x]>=0 && mapunitID[y,x]!=InTurnUnitIdx) HasSomeoneHere = true;
        
         return HasSomeoneHere;
     }

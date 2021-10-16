@@ -15,15 +15,11 @@ public class UnitMove : MonoBehaviour
     private MapField mapfields;//ここにフィールドの情報入れておいた　今回の戦闘フィールドの　タイルごとの情報が入った二次元配列
     [SerializeField]
     BattleSceneManager scenemanager;
-    [SerializeField]
-    MapTile unitmaptile;
-    [SerializeField]
-    MapTile enemymaptile;
-    
+   
 
-    private MapTile[,] maptiles= new MapTile[12,24];　//マップフィールドの情報をそのまんま受け取る為の器
+    private int[,] mapMovementInfo= new int[12,24];　//マップフィールドの移動情報だけを受け取る
 
-    private int lengthy; //maptileの長さを獲得、出ないように注意
+    private int lengthy; //mapMovementInfoの長さを獲得、出ないように注意
     private int lengthx; //test
     
     private Stack<int> posistackx = new Stack<int>();
@@ -33,13 +29,13 @@ public class UnitMove : MonoBehaviour
     
 
     // Start is called before the first frame update
-    void Start()
+   
+    public void PrepareStart() // スタート時に起動
     {
-        
-       lengthy = maptiles.GetLength(0);
-       lengthx = maptiles.GetLength(1); 
+       lengthy = mapMovementInfo.GetLength(0);
+       lengthx = mapMovementInfo.GetLength(1); 
+       mapMovementInfo=mapfields.GetMovementArray();
        resetMapmove();
-       　//changeUnitposi(y,x)でフィールドの情報更新、そしてCharaManagerに座標の目標位置まで動く命令
     }
 
     public static int[,] GetMapmve{get=>mapmove;}
@@ -54,17 +50,7 @@ public class UnitMove : MonoBehaviour
             }
         }
     }
-    public void getMaptilesInfo(Unit[] units) //calmoverangeと同時に使用、Rangeの一番最初に1回出現、その後Rangeループ
-    {
-         maptiles= mapfields.GetMaptiles();//こいつで今回のフィールドの情報を全てGET　毎回ゲットしてプレイヤー・モンスターがいる場所とその周りを変更
-        //for(int i=0;i<BattleSceneManager.partynumber;i++) //敵用でしたわ
-        //{   
-        //    int x=units[i].Unit_x;
-        //    int y=units[i].Unit_y;
-        //    maptiles[y,x]= unitmaptile;
-        //}
-         
-    }
+    
 
     public void calMoveRange(int y,int x,int moverem)//現在座標y、x、プレイヤー移動残り
     {
@@ -84,7 +70,7 @@ public class UnitMove : MonoBehaviour
       
       if(y+1<lengthy) //←Array内かどうか判断
       {
-            sabunUp = moverem-maptiles[y+1,x].movement;　//目標マップに移動するにあたる移動消費(maptiles[目標座標].movementはこのタイルの消費量が書いてある)の差を計算
+            sabunUp = moverem-mapMovementInfo[y+1,x];　//目標マップに移動するにあたる移動消費(mapMovementInfo[目標座標]はこのタイルの消費量が書いてある)の差を計算
             if(mapmove[y+1,x]< moverem && sabunUp>=0) calMoveRange(y+1,x,sabunUp);
              //解説：mapmove[目標座標]には予測されたそこへ移動した際の残り移動量が書いてある。
              //もしもっといい路線が構築された場合それを新しい値で置き換える。そのため、mapmoveがmoveremより小さい場合は置き換える権利と周りの再計算の権利を得る。
@@ -92,19 +78,19 @@ public class UnitMove : MonoBehaviour
       }
       if(x+1<lengthx) 
       {
-            sabunRight = moverem-maptiles[y,x+1].movement;
+            sabunRight = moverem-mapMovementInfo[y,x+1];
             if(mapmove[y,x+1]< moverem && sabunRight>=0) calMoveRange(y,x+1,sabunRight);
       }
       
       if(y-1>=0)
       {
-          sabunDown = moverem-maptiles[y-1,x].movement;
+          sabunDown = moverem-mapMovementInfo[y-1,x];
           if(mapmove[y-1,x]< moverem && sabunDown>=0) calMoveRange(y-1,x,sabunDown);
       } 
       
       if(x-1>=0) 
       {
-          sabunLeft = moverem-maptiles[y,x-1].movement;
+          sabunLeft = moverem-mapMovementInfo[y,x-1];
          if(mapmove[y,x-1]< moverem && sabunLeft>=0) calMoveRange(y,x-1,sabunLeft);
       }
         

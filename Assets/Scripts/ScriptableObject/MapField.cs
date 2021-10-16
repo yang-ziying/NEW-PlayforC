@@ -42,6 +42,20 @@ public class MapField : ScriptableObject {
     }
     return Field;
     }
+    public int[,] GetMovementArray()//移動だけを送るぜ
+    { 
+        int[,] movementArray= new int[12,24];
+        for(int x=0;x<24;x++)
+        { 
+            for(int y=0; y<12; y++)
+            { 
+            int n = lines[y,x]; //タイルを埋めて返す
+            movementArray[y,x]=Maptiles[n].movement;
+            }
+        }
+        return movementArray;
+
+    }
     
 
     public string mapName {get=>Mapname;}

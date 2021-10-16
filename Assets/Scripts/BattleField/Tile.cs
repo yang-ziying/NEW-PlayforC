@@ -7,7 +7,8 @@ public class Tile : MonoBehaviour
     //現在ーー全体的にMoveの時に赤くするプログラム
     //StaticのUnitmoveのMapmove（マップの移動残りマス表示、ないときは-値）を取り出してきている
     //ついでに赤いときにマウスにクリックされたらその座標を返す
-    int[,] array= new int[12,24];
+    int[,] mapmovearray= new int[12,24];
+    int[,] mapattackarray= new int[12,24];
     public int thisx;
     public int thisy;
     GameObject movetile;
@@ -20,12 +21,13 @@ public class Tile : MonoBehaviour
     void Start()
     {
         
-        array = UnitMove.GetMapmve;　//すごく・・・参照型です・・・
+        mapmovearray = UnitMove.GetMapmve;　//すごく・・・参照型です・・・
+        mapattackarray = UnitAttack.GetMapAttack;
         movetile = transform.Find("MoveArea").gameObject;
         attacktile = transform.Find("AttackArea").gameObject;
         scenemanager=GameObject.Find("SceneManager").GetComponent<BattleSceneManager>();
         Debug.Log("testtest"+thisx +","+thisy);
-        //Debug.Log(array[thisy,thisx]);
+        //Debug.Log(mapmovearray[thisy,thisx]);
         
     }
 
@@ -33,14 +35,16 @@ public class Tile : MonoBehaviour
     void Update()
     {
         
-        if(array[thisy,thisx] <0 || scenemanager.IsOtherUnitHere(thisy,thisx) ) movetile.SetActive (false); //mapmoveが-の時とmapunitにInturnキャラ以外の人がいる時そこは行けない
+        if(mapmovearray[thisy,thisx] <0 || scenemanager.IsOtherUnitHere(thisy,thisx) ) movetile.SetActive (false); //mapmoveが-の時とmapunitにInturnキャラ以外の人がいる時そこは行けない
         else movetile.SetActive (true);
+        if(mapattackarray[thisy,thisx]<0) attacktile.SetActive(false);
+        else attacktile.SetActive(true);
 
         
     }
      void OnMouseDown()
      {
-        Debug.Log(array[thisy,thisx]);
+        Debug.Log(mapmovearray[thisy,thisx]);
         clickx= thisx;
         clicky= thisy;
     }   
