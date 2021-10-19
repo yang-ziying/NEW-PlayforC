@@ -207,7 +207,13 @@ public class BattleSceneManager : MonoBehaviour
         if(IsReadyToAttack)
         {
             IsReadyToAttack = false;
-            unitattack.CalAttackRange(units[InTurnUnitIdx].Unit_y,units[InTurnUnitIdx].Unit_x,3,4);
+
+            Weapon testweapon = new Weapon();//for test、もともとはUnitに入れるデータ
+            Skill testskill = new Skill();//for test、もともとはUnitに入れるデータ
+            testskill=testweapon.GetWeaponSkillforTest();//for test、もともとはUnitに入れるデータ
+
+            unitattack.CalAttackRange(units[InTurnUnitIdx].Unit_y,units[InTurnUnitIdx].Unit_x,testskill);
+           
         }
     }
 

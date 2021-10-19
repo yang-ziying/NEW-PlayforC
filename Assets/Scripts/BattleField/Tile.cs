@@ -8,11 +8,11 @@ public class Tile : MonoBehaviour
     //StaticのUnitmoveのMapmove（マップの移動残りマス表示、ないときは-値）を取り出してきている
     //ついでに赤いときにマウスにクリックされたらその座標を返す
     int[,] mapmovearray= new int[12,24];
-    int[,] mapattackarray= new int[12,24];
     public int thisx;
     public int thisy;
     GameObject movetile;
     GameObject attacktile;
+    GameObject roundtile;
     public static int clickx;
     public static int clicky;
     private BattleSceneManager scenemanager;
@@ -22,9 +22,10 @@ public class Tile : MonoBehaviour
     {
         
         mapmovearray = UnitMove.GetMapmve;　//すごく・・・参照型です・・・
-        mapattackarray = UnitAttack.GetMapAttack;
+       
         movetile = transform.Find("MoveArea").gameObject;
         attacktile = transform.Find("AttackArea").gameObject;
+        roundtile = transform.Find("RoundArea").gameObject;
         scenemanager=GameObject.Find("SceneManager").GetComponent<BattleSceneManager>();
         Debug.Log("testtest"+thisx +","+thisy);
         //Debug.Log(mapmovearray[thisy,thisx]);
@@ -37,8 +38,14 @@ public class Tile : MonoBehaviour
         
         if(mapmovearray[thisy,thisx] <0 || scenemanager.IsOtherUnitHere(thisy,thisx) ) movetile.SetActive (false); //mapmoveが-の時とmapunitにInturnキャラ以外の人がいる時そこは行けない
         else movetile.SetActive (true);
-        if(mapattackarray[thisy,thisx]<0) attacktile.SetActive(false);
+
+
+        
+        if(UnitAttack.mapattack[thisy,thisx]<0) attacktile.SetActive(false);
         else attacktile.SetActive(true);
+
+        if(UnitAttack.mapattackRound[thisy,thisx]<0) roundtile.SetActive(false);
+        else roundtile.SetActive(true);
 
         
     }
@@ -48,5 +55,14 @@ public class Tile : MonoBehaviour
         clickx= thisx;
         clicky= thisy;
     }   
+    private void OnMouseEnter() {
+        if(UnitAttack.mapattack[thisy,thisx]>=0)
+        {
+            
+            UnitAttack.ChangeAttackRound(thisy,thisx);
+        }
+        
+        
+    }
 }
 

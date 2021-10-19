@@ -4,12 +4,15 @@ using UnityEngine;
 
 public class UnitAttack : MonoBehaviour
 {
-     private static int[,] mapattack = new int[12,24]; //アタックのデフォ値も-1にしておいた
-
+    public static int[,] mapattack = new int[12,24]; //アタックのデフォ値も-1にしておいた
+    public static int[,] mapattackRound= new int[12,24];
+    private static int roundscale;
 
     public void PrepareStart()
     {
         ResetAttackRange();
+        ResetAttackRangeRound();
+        
     }
     public void ResetAttackRange()
     {
@@ -22,39 +25,53 @@ public class UnitAttack : MonoBehaviour
         }
 
     }
+    public void ResetAttackRangeRound()
+    {
+       
+        for(int x=0; x<24; x++)
+        {
+            for(int y=0; y<12;y++){
+                mapattackRound[y,x]=-1;
+            }
+        }
 
-   public void CalAttackRange(int y, int x, int rangeMin, int rangeMax)
-   {
-       //for(int i=rangeMin;i<=rangeMax;i++)
-       //{
-                //X型だった
-               //if(y+i<12&&x+i<24) mapattack[y+i,x+i]=1;
-               //if(y+i<12&&x-i>=0) mapattack[y+i,x-i]=1;
-               //if(y-i>=0&&x+i<24) mapattack[y-i,x+i]=1;
-               //if(y-i>=0&&x-i>=0) mapattack[y-i,x-i]=1;
+    }
 
-            //十字型だった
-           //if(y+i<12) mapattack[y+i,x]=1;
-           //if(x-i>=0) mapattack[y,x-i]=1;
-           //if(y-i>=0) mapattack[y-i,x]=1;
-          // if(x+i<24) mapattack[y,x+i]=1;
-       //}
-       //合計値制限しなくて、int rx=ranggeMinからやると四角が４つ
-       for(int rx=0;rx<=rangeMax;rx++)
+    public static void ChangeAttackRound(int y,int x)//これ実をいうと画面の変更だけ
+    {
+       
+          for(int xx=0; xx<24; xx++)
+        {
+            for(int yy=0; yy<12;yy++){
+               mapattackRound[yy,xx]=-1;
+            }
+        }
+      
+       for(int rx=0;rx<=roundscale;rx++)
        {
-           for(int ry=0;ry<=rangeMax;ry++)
+           for(int ry=0;ry<=roundscale;ry++)
            {
-               if(rx+ry<=rangeMax&&rx+ry>=rangeMin)
+               if(rx+ry<=roundscale)
                {
-               if(y+ry<12&&x+rx<24) mapattack[y+ry,x+rx]=1;
-               if(y+ry<12&&x-rx>=0) mapattack[y+ry,x-rx]=1;
-               if(y-ry>=0&&x+rx<24) mapattack[y-ry,x+rx]=1;
-               if(y-ry>=0&&x-rx>=0) mapattack[y-ry,x-rx]=1;
+               if(y+ry<12&&x+rx<24) mapattackRound[y+ry,x+rx]=1;
+               if(y+ry<12&&x-rx>=0) mapattackRound[y+ry,x-rx]=1;
+               if(y-ry>=0&&x+rx<24) mapattackRound[y-ry,x+rx]=1;
+               if(y-ry>=0&&x-rx>=0) mapattackRound[y-ry,x-rx]=1;
                }
 
            }
        }
+       
 
+
+    }
+
+   public void CalAttackRange(int y, int x,Skill normalattackskill) //RangeMinとAttackはスキルから、ここをスキル名に変更する
+   {
+       
+      mapattack=normalattackskill.calAttackRange(y,x);
+      roundscale=normalattackskill.RangeArea;
+     
    }
    public void GetUnitAttacked(int[,] mapunit,string team)
    {
@@ -73,5 +90,5 @@ public class UnitAttack : MonoBehaviour
 
    }
 
-    public static int[,] GetMapAttack{get=>mapattack;}
+ 
 }
